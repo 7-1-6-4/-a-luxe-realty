@@ -7,6 +7,7 @@ import { getSupabase } from '@/lib/supabase-optimized'
 const supabase = getSupabase()
 import { useRouter } from 'next/navigation'
 import { debounce } from '@/lib/performance-utils'
+import Image from 'next/image'
 
 interface PropertyFormProps {
   currentUser: {
@@ -747,36 +748,54 @@ export function PropertyForm({ currentUser }: PropertyFormProps) {
     }
 
     const priceValue = parseFloat(formData.price)
-    const priceAsString = priceValue.toFixed(2)
 
-    const propertyInsertData = {
-      title: formData.title,
-      description: formData.description,
-      price: priceAsString,
-      property_type: formData.property_type,
-      listing_type: formData.listing_type,
-      status: formData.status,
-      bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
-      bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : null,
-      square_feet: formData.square_feet ? parseInt(formData.square_feet) : null,
-      lot_size: formData.lot_size ? parseInt(formData.lot_size) : null,
-      year_built: formData.year_built ? parseInt(formData.year_built) : null,
-      address: formData.address,
-      city: formData.city,
-      state: formData.state || null,
-      zip_code: formData.zip_code || null,
-      neighborhood: formData.neighborhood || null,
-      country: 'Kenya',
-      agent_id: finalAgentId || null,
-      images: [],
-      video_url: null,
-      virtual_tour_url: null,
-      thumbnail_image: null,
-      features: {},
-      views_count: 0,
-      inquiries_count: 0,
-      featured: formData.featured // NEW: Include featured value
-    }
+const propertyInsertData = {
+  title: formData.title,
+  description: formData.description,
+  price: priceValue, // ✅ CORRECT - sending number
+  property_type: formData.property_type,
+  listing_type: formData.listing_type,
+  status: formData.status,
+  bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
+  bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : null,
+  square_feet: formData.square_feet ? parseInt(formData.square_feet) : null,
+  lot_size: formData.lot_size ? parseInt(formData.lot_size) : null,
+  year_built: formData.year_built ? parseInt(formData.year_built) : null,
+  address: formData.address,
+  city: formData.city,
+  state: formData.state || null,
+  zip_code: formData.zip_code || null,
+  neighborhood: formData.neighborhood || null,
+  country: 'Kenya',
+  agent_id: finalAgentId || null,
+  images: [],
+  video_url: null,
+  virtual_tour_url: null,
+  thumbnail_image: null,
+  features: {},
+  views_count: 0,
+  inquiries_count: 0,
+  featured: formData.featured
+
+    stories: null,
+  garage_spaces: null,
+  floor_plan_url: null,
+  virtual_tour_type: null,
+  virtual_tour_provider: null,
+  virtual_tour_metadata: {},
+  virtual_staging_url: null,
+  last_price_change: null,
+  previous_price: null,
+  days_on_market: null,
+  hoa_fee: null,
+  property_tax: null,
+  utilities_included: [],
+  latitude: null,
+  longitude: null,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  listing_date: new Date().toISOString()
+}
 
     console.log('🔄 Attempting to create property with data:', JSON.stringify(propertyInsertData, null, 2))
 
@@ -1307,10 +1326,13 @@ export function PropertyForm({ currentUser }: PropertyFormProps) {
                     {imagePreviews.map((previewUrl, index) => (
                       <div key={index} className="relative group">
                         <div className="relative h-40 bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-600 hover:border-amber-500 transition-colors">
-                          <img
+                          <Image
                             src={previewUrl}
                             alt={`Preview ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            fill
+                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover"
+                            unoptimized // Since these are blob URLs
                           />
                           {index === 0 && (
                             <div className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-semibold flex items-center gap-1">
