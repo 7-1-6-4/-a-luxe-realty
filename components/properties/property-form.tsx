@@ -775,9 +775,9 @@ const propertyInsertData = {
   features: {},
   views_count: 0,
   inquiries_count: 0,
-  featured: formData.featured
+  featured: formData.featured,
 
-    stories: null,
+  stories: null,
   garage_spaces: null,
   floor_plan_url: null,
   virtual_tour_type: null,
